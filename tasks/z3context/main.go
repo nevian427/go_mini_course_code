@@ -61,7 +61,27 @@ func (s *Service) getOrderByID(id int64) (*order, error) {
 }
 
 func (s *Service) getOrderByIDWrapper(ctx context.Context, id int64) (*order, error) {
-	return s.getOrderByID(id)
+	type getOrderRes struct {
+		o *order
+		e error
+	}
+	resChan := make(chan getOrderRes)
+	defer close(resChan)
+
+	go func() {
+		var res getOrderRes
+
+		res.o, res.e = s.getOrderByID(id)
+		resChan <- res
+	}()
+
+	select {
+	case <-ctx.Done():
+		return nil, ErrTimeout
+	case res := <-resChan:
+		return res.o, res.e
+	}
+
 }
 
 func main() {
@@ -87,7 +107,7 @@ func main() {
 	for i := 0; i < 100; i++ {
 		ctx, cancel := context.WithTimeout(context.Background(), 800*time.Millisecond)
 		result, err := service.getOrderByIDWrapper(ctx, 5)
-		
+
 		fmt.Println(result, err)
 
 		cancel()
