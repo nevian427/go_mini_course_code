@@ -72,7 +72,9 @@ func (s *Service) getOrderByIDWrapper(ctx context.Context, id int64) (*order, er
 		var res getOrderRes
 
 		res.o, res.e = s.getOrderByID(id)
-		resChan <- res
+		if ctx.Err() == nil {
+			resChan <- res
+		}
 	}()
 
 	select {
