@@ -66,15 +66,12 @@ func (s *Service) getOrderByIDWrapper(ctx context.Context, id int64) (*order, er
 		e error
 	}
 	resChan := make(chan getOrderRes)
-	defer close(resChan)
 
 	go func() {
 		var res getOrderRes
 
 		res.o, res.e = s.getOrderByID(id)
-		if ctx.Err() == nil {
-			resChan <- res
-		}
+		resChan <- res
 	}()
 
 	select {
@@ -83,7 +80,6 @@ func (s *Service) getOrderByIDWrapper(ctx context.Context, id int64) (*order, er
 	case res := <-resChan:
 		return res.o, res.e
 	}
-
 }
 
 func main() {
