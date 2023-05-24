@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	// You can limit concurrent net request. It's optional
+	// you can limit concurrent net request. It's optional
 	MaxGoroutines = 1
 	// timeout for net requests
 	Timeout = 2 * time.Second
@@ -39,17 +39,14 @@ func NewMonitor(sites []string, requestFrequency time.Duration) *Monitor {
 }
 
 func (m *Monitor) Run(ctx context.Context) error {
-	// Run printStatuses(ctx) and checkSite(ctx) for m.Sites
-	// Renew sites requests to map every m.RequestFrequency
-	// Return if context closed
+	// run printStatuses and checkSite in different goroutines
 	return nil
 }
 
 func (m *Monitor) checkSite(ctx context.Context, site string) {
-	// with http client go through site and write result to m.StatusMap
+	// check site and write result to StatusMap
 }
 func (m *Monitor) printStatuses(ctx context.Context) error {
-	// print results of m.Status every second of until ctx cancelled
-
+	// iterate iver map and print results
 	return nil
 }
