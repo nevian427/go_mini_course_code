@@ -21,16 +21,17 @@ func (r *ringBuffer) Run() {
 }
 
 func main() {
-	inCh := make(chan int)
-	outCh := make(chan int, 4)
-	rb := NewRingBuffer(inCh, outCh)
-	go rb.Run()
-
 	max := 100
+	inCh := make(chan int, max)
+	outCh := make(chan int, 10)
+
 	for i := 0; i < max; i++ {
 		inCh <- i
 	}
+
+	rb := NewRingBuffer(inCh, outCh)
 	close(inCh)
+	rb.Run()
 
 	resSlice := make([]int, 0)
 	for res := range outCh {
